@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # np.random.randn: “normal” (Gaussian) distribution of mean 0 and variance 1
+np.random.seed(13579)
 part1 = np.random.randn(50, 2) + [2, 2]
 part2 = np.random.randn(50, 2) + [0, -2]
 part3 = np.random.randn(50, 2) + [-2, 2]
@@ -19,19 +20,27 @@ k = 3
 C_X = np.random.randint(np.min(X), np.max(X), size=k)
 C_y = np.random.randint(np.min(X), np.max(X), size=k)
 C = np.array(list(zip(C_X, C_y)), dtype=np.float32)
+
+
 # print(C)
 
 def dist(a, b, ax=1):
     return np.linalg.norm(a - b, axis=ax)
 
+
 p = np.array([[0, 0]])
 q = np.array([[3, 4]])
-print(dist(p, q))
+# print(dist(p, q))
 
 C_old = np.zeros(C.shape)
 clusters = np.zeros(len(X))
 delta = dist(C, C_old, None)
-print(delta)
+
+
+# print(C)
+# print(dist(C, C_old, 1))
+# print(dist(C, C_old, 0))
+# print(dist(C, C_old, None))
 
 
 def plot_kmean(current_cluster, delta):
@@ -57,12 +66,17 @@ while delta != 0:
         distance = dist(X[i], C)
         cluster = np.argmin(distance)
         clusters[i] = cluster
+        if (i in [0, 50, 100]):
+            print("  No.", i, "data distance:", distance)
+            print("    cluster: ", cluster)
     C_old = deepcopy(C)
     # move k-mean center to current point
     for i in range(k):
         points = [X[j] for j in range(len(X)) if clusters[j] == i]
         # calculate new center
+        print("  shape of points for calculating center: ", type(points))
         C[i] = np.mean(points, axis=0)
     # calculate distance between old <----> new center
     delta = dist(C, C_old, None)
-    plot_kmean(clusters, delta)
+    print("final delta: ", delta)
+    # plot_kmean(clusters, delta)
